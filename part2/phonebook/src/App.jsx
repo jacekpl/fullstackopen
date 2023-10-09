@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import {useState} from 'react'
 
 const App = () => {
     const [persons, setPersons] = useState([
-        { name: 'Arto Hellas' }
+        {name: 'Arto Hellas'}
     ])
     const [newName, setNewName] = useState('')
 
     const addName = (event) => {
         event.preventDefault()
+
+        const filtered = persons.filter(p => {
+            return p.name === newName
+        })
+
+        if(filtered.length) {
+            alert(`${newName} is already added to the phonebook`)
+            return
+        }
+
         setPersons(persons.concat({name: newName}))
         setNewName('')
     }
@@ -24,8 +34,8 @@ const App = () => {
                 <div>
                     name:
                     <input
-                    value={newName}
-                    onChange={handleNameChange}
+                        value={newName}
+                        onChange={handleNameChange}
                     />
                 </div>
                 <div>
