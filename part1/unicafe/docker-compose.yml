@@ -1,0 +1,8 @@
+services:
+  client:
+    restart: "no"
+    build: .
+    ports:
+      - 5173:5173
+    volumes:
+      - .:/app
