@@ -1,8 +1,12 @@
 import {useState} from 'react'
+import Filter from "./components/Filter.jsx";
+import PersonForm from "./components/PersonForm.jsx";
+import Persons from "./components/Persons.jsx";
 
 const App = () => {
     const [persons, setPersons] = useState([
-        {name: 'Arto Hellas', number: '1234567'}
+        {name: 'Arto Hellas', number: '1234567'},
+        {name: 'Jacek Różański', number: '322334535'},
     ])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
@@ -54,40 +58,14 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>
-                Search: <input
-                value={newSearch}
-                onChange={handleSearch}
-            />
-            </div>
+            <Filter value={newSearch} onChange={handleSearch}/>
 
             <h2>add a new</h2>
 
-            <form onSubmit={addContact}>
-                <div>
-                    name:
-                    <input
-                        value={newName}
-                        onChange={handleNameChange}
-                    />
-                </div>
-
-                <div>
-                    number:
-                    <input
-                        value={newNumber}
-                        onChange={handleNumberChange}
-                    />
-                </div>
-
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <PersonForm onSubmit={addContact} nameValue={newName} onNameChange={handleNameChange}
+                        numberValue={newNumber} onNumberChange={handleNumberChange}/>
             <h2>Numbers</h2>
-            {contactsToShow.map(p => {
-                return <div key={p.name}>{p.name} {p.number}<br/></div>
-            })}
+            <Persons persons={contactsToShow}/>
         </div>
     )
 }
