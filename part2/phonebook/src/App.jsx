@@ -34,6 +34,11 @@ const App = () => {
             return
         }
 
+        axios.post('http://localhost:3001/persons', {name: newName, number: newNumber})
+            .then(response => {
+                setPersons(persons.concat(response.data))
+            })
+
         setPersons(persons.concat({name: newName, number: newNumber}))
         setNewName('')
         setNewNumber('')
@@ -54,14 +59,11 @@ const App = () => {
         setNewSearch(event.target.value)
     }
 
-    const contactsToShow = newSearch ?
-        persons.filter(p => {
-            return p.name.toLowerCase().includes(newSearch.toLowerCase())
-        })
-        : persons
+    const contactsToShow = newSearch ? persons.filter(p => {
+        return p.name.toLowerCase().includes(newSearch.toLowerCase())
+    }) : persons
 
-    return (
-        <div>
+    return (<div>
             <h2>Phonebook</h2>
             <Filter value={newSearch} onChange={handleSearch}/>
 
@@ -71,8 +73,7 @@ const App = () => {
                         numberValue={newNumber} onNumberChange={handleNumberChange}/>
             <h2>Numbers</h2>
             <Persons persons={contactsToShow}/>
-        </div>
-    )
+        </div>)
 }
 
 export default App
