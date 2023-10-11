@@ -1,8 +1,17 @@
 services:
   client:
     restart: "no"
-    build: .
+    build:
+      target: app
     ports:
       - 5173:5173
+    volumes:
+      - .:/app
+  json-server:
+    restart: "no"
+    build:
+      target: json-server
+    ports:
+      - 3001:3001
     volumes:
       - .:/app
