@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react'
 import Filter from "./components/Filter.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
-import axios from "axios";
 import personsService from "./services/persons";
 
 const App = () => {
@@ -40,6 +39,14 @@ const App = () => {
         setNewNumber('')
     }
 
+    const handleDelete = (id) => {
+        if (window.confirm("Delete " + persons.find(p => p.id === id).name + "?")) {
+            personsService.deletePerson(id).then(
+                setPersons(persons.filter(p => p.id !== id)
+                ))
+        }
+    }
+
     const handleNameChange = (event) => {
         event.preventDefault()
         setNewName(event.target.value)
@@ -60,16 +67,16 @@ const App = () => {
     }) : persons
 
     return (<div>
-            <h2>Phonebook</h2>
-            <Filter value={newSearch} onChange={handleSearch}/>
+        <h2>Phonebook</h2>
+        <Filter value={newSearch} onChange={handleSearch}/>
 
-            <h2>add a new</h2>
+        <h2>add a new</h2>
 
-            <PersonForm onSubmit={addContact} nameValue={newName} onNameChange={handleNameChange}
-                        numberValue={newNumber} onNumberChange={handleNumberChange}/>
-            <h2>Numbers</h2>
-            <Persons persons={contactsToShow}/>
-        </div>)
+        <PersonForm onSubmit={addContact} nameValue={newName} onNameChange={handleNameChange}
+                    numberValue={newNumber} onNumberChange={handleNumberChange}/>
+        <h2>Numbers</h2>
+        <Persons persons={contactsToShow} handleDelete={handleDelete}/>
+    </div>)
 }
 
 export default App
