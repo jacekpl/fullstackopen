@@ -1,16 +1,21 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import Filter from "./components/Filter.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
+import axios from "axios";
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        {name: 'Arto Hellas', number: '1234567'},
-        {name: 'Jacek Różański', number: '322334535'},
-    ])
+    const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [newSearch, setNewSearch] = useState('')
+
+    useEffect(() => {
+        axios.get('http://localhost:3001/persons')
+            .then(response => {
+                setPersons(response.data)
+            })
+    }, []);
 
     const addContact = (event) => {
         event.preventDefault()
@@ -19,12 +24,12 @@ const App = () => {
             return p.name === newName
         })
 
-        if(filtered.length) {
+        if (filtered.length) {
             alert(`${newName} is already added to the phonebook`)
             return
         }
 
-        if(!newNumber.length) {
+        if (!newNumber.length) {
             alert(`You have to add phone number for ${newName}`)
             return
         }
