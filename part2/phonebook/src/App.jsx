@@ -11,28 +11,36 @@ const App = () => {
     const [newSearch, setNewSearch] = useState('')
 
     useEffect(() => {
-        personsService.getAll().then(initialPersons => setPersons(initialPersons))
+        personsService.getAll()
+            .then(initialPersons => setPersons(initialPersons))
+            .catch(error => alert(error.response.data.error))
     }, []);
 
     const addContact = (event) => {
         event.preventDefault()
-
-        const filtered = persons.filter(p => {
-            return p.name === newName
-        })
-
-        if (filtered.length) {
-            alert(`${newName} is already added to the phonebook`)
-            return
-        }
 
         if (!newNumber.length) {
             alert(`You have to add phone number for ${newName}`)
             return
         }
 
+        const filtered = persons.filter(p => p.name === newName)
+
+        if (filtered.length) {
+            if (filtered[0].number !== newNumber && window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+                personsService.update(filtered[0].id, {name: newName, number: newNumber})
+                    .then(updated => setPersons(persons.map(p => p.id !== updated.id ? p : updated)))
+                    .catch(error => alert(error.response.data.error))
+                return
+            }
+
+            alert(`${newName} is already added to the phonebook`)
+            return
+        }
+
         personsService.create({name: newName, number: newNumber})
             .then(created => setPersons(persons.concat(created)))
+            .catch(error => alert(error.response.data.error))
 
         setPersons(persons.concat({name: newName, number: newNumber}))
         setNewName('')
@@ -41,9 +49,9 @@ const App = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Delete " + persons.find(p => p.id === id).name + "?")) {
-            personsService.deletePerson(id).then(
-                setPersons(persons.filter(p => p.id !== id)
-                ))
+            personsService.deletePerson(id)
+                .then(setPersons(persons.filter(p => p.id !== id)))
+                .catch(error => alert(`The person '${persons.find(p => p.id === id).name}' was already deleted from server`))
         }
     }
 
