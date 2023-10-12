@@ -4,6 +4,7 @@ import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
 import personsService from "./services/persons";
 import Notification from "./components/Notification.jsx";
+import Error from "./components/Error.jsx";
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -11,6 +12,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [newSearch, setNewSearch] = useState('')
     const [message, setMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
         personsService.getAll()
@@ -41,40 +43,50 @@ const App = () => {
                 return
             }
 
-            alert(`${newName} is already added to the phonebook`)
+            setErrorMessage(`${newName} is already added to the phonebook`)
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
             return
         }
 
         personsService.create({name: newName, number: newNumber})
-            .then(created => setPersons(persons.concat(created)))
-            .catch(error => {
-                alert(error.response.data.error)
+            .then(created => {
+                setPersons(persons.concat(created))
+                setNewName('')
+                setNewNumber('')
+                setMessage(`Added ${newName}`)
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
             })
-
-        setPersons(persons.concat({name: newName, number: newNumber}))
-        setNewName('')
-        setNewNumber('')
-        setMessage(`Added ${newName}`)
-        setTimeout(() => {
-            setMessage(null)
-        }, 5000)
+            .catch(error => {
+                setErrorMessage(error.response.data.error)
+                setTimeout(() => {
+                    setErrorMessage(null)
+                }, 5000)
+            })
     }
 
     const handleDelete = (id) => {
         if (window.confirm("Delete " + persons.find(p => p.id === id).name + "?")) {
             personsService.deletePerson(id)
-                .then(deleted => setPersons(persons.filter(p => p.id !== id)))
+                .then(deleted => {
+                    setPersons(persons.filter(p => p.id !== id))
+                    setMessage(`Deleted ${persons.find(p => p.id === id).name}`)
+                    setTimeout(() => {
+                            setMessage(null)
+                        }, 5000
+                    )
+                })
                 .catch(error => {
                     setPersons(persons.filter(p => p.id !== id))
                     //can be something different, like not responding endpoint, etc
-                    alert(`The person '${persons.find(p => p.id === id).name}' was already deleted from server`)
+                    setErrorMessage(`The person '${persons.find(p => p.id === id).name}' was already deleted from server`)
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
                 })
-
-                setMessage(`Deleted ${persons.find(p => p.id === id).name}`)
-                setTimeout(() => {
-                        setMessage(null)
-                    }, 5000
-                )
         }
     }
 
@@ -100,6 +112,7 @@ const App = () => {
     return (<div>
         <h2>Phonebook</h2>
         <Notification message={message}/>
+        <Error message={errorMessage}/>
         <Filter value={newSearch} onChange={handleSearch}/>
 
         <h2>add a new</h2>
