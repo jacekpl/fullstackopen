@@ -1,30 +1,31 @@
+import CountryView from "./CountryView.jsx";
+import {useState} from "react";
+
 const Countries = ({filteredCountries}) => {
+    const [showCountry, setShowCountry] = useState(null)
+    const handleShowClick = (commonName) => {
+        const selectedCountry = filteredCountries.find(country => country.name.common === commonName)
+        setShowCountry(selectedCountry)
+    }
+
+    const handleHideClick = () => {
+        setShowCountry(null)
+    }
+
     if (filteredCountries.length > 10) {
         return <div>Too many matches, specify another filter</div>
     }
 
     if (filteredCountries.length === 1) {
-        const languages = [];
-        for (const [code, name] of Object.entries(filteredCountries[0].languages)) {
-            languages.push({code, name})
-        }
-
-        return <div>
-            <h1>{filteredCountries[0].name.common}</h1>
-            capital {filteredCountries[0].capital[0]}<br/>
-            population {filteredCountries[0].area}<br/>
-            <h2>languages</h2>
-            <ul>
-                {languages.map(language => <li key={language.code}>{language.name}</li>)}
-            </ul>
-            <img src={filteredCountries[0].flags.png} alt="flag" width="100" height="100"/>
-        </div>
+        return <CountryView country={filteredCountries[0]}/>
     }
 
     return <div>
         <ul>
-            {filteredCountries.map(country => <li key={country.name.common}>{country.name.common}</li>)}
+            {filteredCountries.map(country => <li key={country.name.common}>{country.name.common} <button onClick={() => handleShowClick(country.name.common)}>show</button></li>)}
         </ul>
+
+        {showCountry && <><CountryView country={showCountry}/><button onClick={handleHideClick}>hide</button></>}
     </div>
 }
 
