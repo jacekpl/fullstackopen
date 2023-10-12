@@ -3,12 +3,14 @@ import Filter from "./components/Filter.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
 import personsService from "./services/persons";
+import Notification from "./components/Notification.jsx";
 
 const App = () => {
     const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [newSearch, setNewSearch] = useState('')
+    const [message, setMessage] = useState(null)
 
     useEffect(() => {
         personsService.getAll()
@@ -31,6 +33,11 @@ const App = () => {
                 personsService.update(filtered[0].id, {name: newName, number: newNumber})
                     .then(updated => setPersons(persons.map(p => p.id !== updated.id ? p : updated)))
                     .catch(error => alert(error.response.data.error))
+
+                setMessage(`Updated ${newName}`)
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
                 return
             }
 
@@ -40,18 +47,34 @@ const App = () => {
 
         personsService.create({name: newName, number: newNumber})
             .then(created => setPersons(persons.concat(created)))
-            .catch(error => alert(error.response.data.error))
+            .catch(error => {
+                alert(error.response.data.error)
+            })
 
         setPersons(persons.concat({name: newName, number: newNumber}))
         setNewName('')
         setNewNumber('')
+        setMessage(`Added ${newName}`)
+        setTimeout(() => {
+            setMessage(null)
+        }, 5000)
     }
 
     const handleDelete = (id) => {
         if (window.confirm("Delete " + persons.find(p => p.id === id).name + "?")) {
             personsService.deletePerson(id)
-                .then(setPersons(persons.filter(p => p.id !== id)))
-                .catch(error => alert(`The person '${persons.find(p => p.id === id).name}' was already deleted from server`))
+                .then(deleted => setPersons(persons.filter(p => p.id !== id)))
+                .catch(error => {
+                    setPersons(persons.filter(p => p.id !== id))
+                    //can be something different, like not responding endpoint, etc
+                    alert(`The person '${persons.find(p => p.id === id).name}' was already deleted from server`)
+                })
+
+                setMessage(`Deleted ${persons.find(p => p.id === id).name}`)
+                setTimeout(() => {
+                        setMessage(null)
+                    }, 5000
+                )
         }
     }
 
@@ -76,6 +99,7 @@ const App = () => {
 
     return (<div>
         <h2>Phonebook</h2>
+        <Notification message={message}/>
         <Filter value={newSearch} onChange={handleSearch}/>
 
         <h2>add a new</h2>
