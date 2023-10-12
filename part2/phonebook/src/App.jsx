@@ -17,7 +17,12 @@ const App = () => {
     useEffect(() => {
         personsService.getAll()
             .then(initialPersons => setPersons(initialPersons))
-            .catch(error => alert(error.response.data.error))
+            .catch(error => {
+                setErrorMessage(error.response.data.error)
+                setTimeout(() => {
+                    setErrorMessage(null)
+                }, 5000)
+            })
     }, []);
 
     const addContact = (event) => {
