@@ -22,6 +22,10 @@ const App = () => {
         setSearch(event.target.value)
     }
 
+    const handleSearch = (countryName) => {
+        setSearch(countryName)
+    }
+
     if (countries === null) {
         return <div>loading...</div>
     }
@@ -29,7 +33,12 @@ const App = () => {
     return (
         <>
             <Form handleSearchChange={handleSearchChange} search={search}/>
-            {search && <Countries filteredCountries={countries.filter(country => country.name.common.toLowerCase().includes(search.toLowerCase()))}/>}
+            {search && <Countries
+                handleSearch={handleSearch}
+                filteredCountries={countries.filter(country => {
+                    return country.name.common.toLowerCase().includes(search.toLowerCase())
+                })}
+            />}
         </>
     )
 }

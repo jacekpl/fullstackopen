@@ -1,17 +1,6 @@
 import CountryView from "./CountryView.jsx";
-import {useState} from "react";
 
-const Countries = ({filteredCountries}) => {
-    const [showCountry, setShowCountry] = useState(null)
-    const handleShowClick = (commonName) => {
-        const selectedCountry = filteredCountries.find(country => country.name.common === commonName)
-        setShowCountry(selectedCountry)
-    }
-
-    const handleHideClick = () => {
-        setShowCountry(null)
-    }
-
+const Countries = ({filteredCountries, handleSearch}) => {
     if (filteredCountries.length > 10) {
         return <div>Too many matches, specify another filter</div>
     }
@@ -22,10 +11,15 @@ const Countries = ({filteredCountries}) => {
 
     return <div>
         <ul>
-            {filteredCountries.map(country => <li key={country.name.common}>{country.name.common} <button onClick={() => handleShowClick(country.name.common)}>show</button></li>)}
+            {filteredCountries.map(country => {
+                    return (
+                        <li key={country.name.common}>{country.name.common}
+                            <button onClick={() => handleSearch(country.name.common)}>show</button>
+                        </li>
+                    )
+                }
+            )}
         </ul>
-
-        {showCountry && <><CountryView country={showCountry}/><button onClick={handleHideClick}>hide</button></>}
     </div>
 }
 
