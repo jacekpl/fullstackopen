@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import weatherService from "../services/openweather.js";
 
 const Weather = ({city}) => {
-    console.log(city)
     const [weather, setWeather] = useState(null)
 
     useEffect(() => {
@@ -14,8 +13,6 @@ const Weather = ({city}) => {
     if (weather === null) {
         return <div>loading...</div>
     }
-    console.log(city)
-    console.log(weather)
 
     return <div>
         <h1>Weather in {city}</h1>
