@@ -1,4 +1,6 @@
-const CountryView = ({ country }) => {
+import Weather from "./Weather.jsx";
+
+const CountryView = ({country}) => {
     const languages = [];
     for (const [code, name] of Object.entries(country.languages)) {
         languages.push({code, name})
@@ -13,6 +15,7 @@ const CountryView = ({ country }) => {
             {languages.map(language => <li key={language.code}>{language.name}</li>)}
         </ul>
         <img src={country.flags.png} alt="flag" width="100" height="100"/>
+        <Weather city={country.capital[0]}/>
     </div>
 }
 
