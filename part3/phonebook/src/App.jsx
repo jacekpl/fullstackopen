@@ -38,13 +38,19 @@ const App = () => {
         if (filtered.length) {
             if (filtered[0].number !== newNumber && window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
                 personsService.update(filtered[0].id, {name: newName, number: newNumber})
-                    .then(updated => setPersons(persons.map(p => p.id !== updated.id ? p : updated)))
-                    .catch(error => alert(error.response.data.error))
-
-                setMessage(`Updated ${newName}`)
-                setTimeout(() => {
-                    setMessage(null)
-                }, 5000)
+                    .then(updated => {
+                        setPersons(persons.map(p => p.id !== updated.id ? p : updated))
+                        setMessage(`Updated ${newName}`)
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000)
+                    })
+                    .catch(error => {
+                        setErrorMessage(error.response.data.error)
+                        setTimeout(() => {
+                            setErrorMessage(null)
+                        }, 5000)
+                    })
                 return
             }
 
