@@ -10,6 +10,7 @@ const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
+    const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -22,6 +23,7 @@ const App = () => {
         if (loggedUser) {
             const user = JSON.parse(loggedUser)
             setUser(user)
+            blogService.setToken(user.token)
         }
     }, [])
 
@@ -30,6 +32,7 @@ const App = () => {
 
         try {
             const user = await loginService.login({username, password})
+            blogService.setToken(user.token)
             setUser(user)
             setUsername('')
             setPassword('')
@@ -47,15 +50,38 @@ const App = () => {
         setUser(null)
     }
 
-    if (errorMessage) {
-        return <Notification message={errorMessage}/>
+    const handleTitleChange = (event) => {
+        setNewBlog({...newBlog, title: event.target.value})
     }
 
-    console.log(user)
+    const handleAuthorChange = (event) => {
+        setNewBlog({...newBlog, author: event.target.value})
+    }
+
+    const handleUrlChange = (event) => {
+        setNewBlog({...newBlog, url: event.target.value})
+    }
+
+    const handleCreateBlog = async (event) => {
+        event.preventDefault()
+
+        try {
+            const addedBlog = await blogService.create(newBlog)
+            setBlogs(blogs.concat(addedBlog))
+            setNewBlog({title: '', author: '', url: ''})
+        } catch (exception) {
+            setErrorMessage('Failed to create blog')
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
+        }
+    }
+
     if (user === null) {
         return (
             <div>
                 <h2>log in to application</h2>
+                <Notification message={errorMessage}/>
                 <form onSubmit={handleLogin}>
                     <div>
                         username
@@ -76,11 +102,33 @@ const App = () => {
             <div>
                 <h2>blogs</h2>
                 <p>{user.name} logged in
-                <button onClick={handleLogout}>logout</button>
+                    <button onClick={handleLogout}>logout</button>
                 </p>
-                {blogs.map(blog =>
-                    <Blog key={blog.id} blog={blog}/>
-                )}
+
+                <h2>create new</h2>
+                <Notification message={errorMessage}/>
+                <div>
+                    title
+                    <input type="text" value={newBlog.title} onChange={handleTitleChange}/>
+                </div>
+
+                <div>
+                    author
+                    <input type="text" value={newBlog.author} onChange={handleAuthorChange}/>
+                </div>
+
+                <div>
+                    url
+                    <input type="text" value={newBlog.url} onChange={handleUrlChange}/>
+                </div>
+
+                <button onClick={handleCreateBlog}>create</button>
+
+                <div>
+                    {blogs.map(blog =>
+                        <Blog key={blog.id} blog={blog}/>
+                    )}
+                </div>
             </div>
         )
     }
