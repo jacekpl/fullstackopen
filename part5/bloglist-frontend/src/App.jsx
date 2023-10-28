@@ -6,7 +6,7 @@ import Notification from "./components/Notification.jsx";
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [message, setMessage] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
@@ -37,10 +37,11 @@ const App = () => {
             setUsername('')
             setPassword('')
             window.localStorage.setItem('user', JSON.stringify(user))
+            setMessage('You were logged in')
         } catch (exception) {
-            setErrorMessage('Wrong credentials')
+            setMessage('Wrong credentials')
             setTimeout(() => {
-                setErrorMessage(null)
+                setMessage(null)
             }, 5000)
         }
     }
@@ -48,6 +49,7 @@ const App = () => {
     const handleLogout = () => {
         window.localStorage.removeItem('user')
         setUser(null)
+        setMessage('You were logged out')
     }
 
     const handleTitleChange = (event) => {
@@ -69,10 +71,11 @@ const App = () => {
             const addedBlog = await blogService.create(newBlog)
             setBlogs(blogs.concat(addedBlog))
             setNewBlog({title: '', author: '', url: ''})
+            setMessage('Blog created')
         } catch (exception) {
-            setErrorMessage('Failed to create blog')
+            setMessage('Failed to create blog')
             setTimeout(() => {
-                setErrorMessage(null)
+                setMessage(null)
             }, 5000)
         }
     }
@@ -81,7 +84,7 @@ const App = () => {
         return (
             <div>
                 <h2>log in to application</h2>
-                <Notification message={errorMessage}/>
+                <Notification message={message}/>
                 <form onSubmit={handleLogin}>
                     <div>
                         username
@@ -106,7 +109,7 @@ const App = () => {
                 </p>
 
                 <h2>create new</h2>
-                <Notification message={errorMessage}/>
+                <Notification message={message}/>
                 <div>
                     title
                     <input type="text" value={newBlog.title} onChange={handleTitleChange}/>
