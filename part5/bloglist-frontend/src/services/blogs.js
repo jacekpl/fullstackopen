@@ -11,7 +11,7 @@ const setToken = newToken => {
 
 const getAll = async () => {
     const response = await axios.get(host + baseUrl)
-    return response.data
+    return response.data.sort((a, b) => b.likes - a.likes)
 }
 
 const create = async (blog) => {
@@ -27,7 +27,7 @@ const update = async (id, blog) => {
     const config = {
         headers: {Authorization: token},
     }
-    
+
     const response = await axios.put(`${host}${baseUrl}/${id}`, blog, config)
     return response.data
 }
