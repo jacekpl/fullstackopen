@@ -15,9 +15,11 @@ const App = () => {
     const [user, setUser] = useState(null)
 
     useEffect(() => {
-        blogService.getAll().then(blogs =>
+        async function fetchData() {
+            const blogs = await blogService.getAll()
             setBlogs(blogs)
-        )
+        }
+        fetchData()
     }, [])
 
     useEffect(() => {
@@ -64,17 +66,34 @@ const App = () => {
 
     const addBlog = async (newBlog) => {
         try {
-            const addedBlog = await blogService.create(newBlog)
-            blogService.getAll().then(blogs =>
-                setBlogs(blogs)
-            )
-            setMessage('Blog created')
+            await blogService.create(newBlog)
+            const blogs = await blogService.getAll()
+            setBlogs(blogs)
             blogFormRef.current.toggleVisibility()
+            setMessage('Blog created')
             setTimeout(() => {
                 setMessage(null)
             }, 5000)
         } catch (exception) {
             setMessage('Failed to create blog')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
+        }
+    }
+
+    const updateBlog = async (blog) => {
+        console.log(blog)
+        try {
+            await blogService.update(blog.id, blog)
+            const blogs = await blogService.getAll()
+            setBlogs(blogs)
+            setMessage('Blog updated')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
+        } catch (exception) {
+            setMessage('Failed to update blog')
             setTimeout(() => {
                 setMessage(null)
             }, 5000)
@@ -125,7 +144,7 @@ const App = () => {
 
                 <div>
                     {blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog}/>
+                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
                     )}
                 </div>
             </div>
