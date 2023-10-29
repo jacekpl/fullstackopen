@@ -1,7 +1,7 @@
 import {useState} from "react";
 import blogs from "../services/blogs.js";
 
-const Blog = ({blog, updateBlog, removeBlog}) => {
+const Blog = ({blog, updateBlog, removeBlog, user}) => {
     const [visible, setVisible] = useState(false)
     const blogStyle = {
         paddingTop: 10,
@@ -11,6 +11,7 @@ const Blog = ({blog, updateBlog, removeBlog}) => {
         marginBottom: 5
     }
 
+    //if anyone should be able to like a blog (not only an author), we would need a separate endpoint in the backend for liking a blog. I haven't seen such requirement in the exercise, so I didn't implement it.
     const handleLike = async (event) => {
         event.preventDefault()
         const updatedBlog = {
@@ -38,7 +39,9 @@ const Blog = ({blog, updateBlog, removeBlog}) => {
                 <button onClick={handleLike}>like</button>
             </div>
             <div>{blog.user?.name ?? 'missing-name'}</div>
-            <button onClick={handleRemove}>remove</button>
+            {blog.user.username === user.username &&
+                <button onClick={handleRemove}>remove</button>
+            }
         </>
         }
     </div>)
