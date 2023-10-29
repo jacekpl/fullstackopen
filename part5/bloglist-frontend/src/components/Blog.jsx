@@ -16,7 +16,7 @@ const Blog = ({blog}) => {
         {visible && <>
             <div>{blog.url}</div>
             <div>likes {blog.likes ?? 0}<button>like</button></div>
-            <div>{blog.author}</div>
+            <div>{blog.user?.name ?? 'missing-name' }</div>
         </>
         }
     </div>)
