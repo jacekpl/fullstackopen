@@ -1,7 +1,7 @@
 import {useState} from "react";
 import blogs from "../services/blogs.js";
 
-const Blog = ({blog, updateBlog}) => {
+const Blog = ({blog, updateBlog, removeBlog}) => {
     const [visible, setVisible] = useState(false)
     const blogStyle = {
         paddingTop: 10,
@@ -22,6 +22,13 @@ const Blog = ({blog, updateBlog}) => {
         await updateBlog(updatedBlog)
     }
 
+    const handleRemove = (event) => {
+        event.preventDefault()
+        if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+            removeBlog(blog.id)
+        }
+    }
+
     return (<div style={blogStyle}>
         {blog.title} {blog.author}
         <button onClick={() => setVisible(!visible)}>{visible ? 'hide' : 'view'}</button>
@@ -31,6 +38,7 @@ const Blog = ({blog, updateBlog}) => {
                 <button onClick={handleLike}>like</button>
             </div>
             <div>{blog.user?.name ?? 'missing-name'}</div>
+            <button onClick={handleRemove}>remove</button>
         </>
         }
     </div>)
