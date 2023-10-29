@@ -83,7 +83,6 @@ const App = () => {
     }
 
     const updateBlog = async (blog) => {
-        console.log(blog)
         try {
             await blogService.update(blog.id, blog)
             const blogs = await blogService.getAll()
@@ -94,6 +93,23 @@ const App = () => {
             }, 5000)
         } catch (exception) {
             setMessage('Failed to update blog')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
+        }
+    }
+
+    const removeBlog = async (id) => {
+        try {
+            await blogService.remove(id)
+            const blogs = await blogService.getAll()
+            setBlogs(blogs)
+            setMessage('Blog removed')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
+        } catch (exception) {
+            setMessage('Failed to remove blog')
             setTimeout(() => {
                 setMessage(null)
             }, 5000)
@@ -144,7 +160,7 @@ const App = () => {
 
                 <div>
                     {blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog}/>
                     )}
                 </div>
             </div>
