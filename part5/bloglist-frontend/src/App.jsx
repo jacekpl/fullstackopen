@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login.js'
@@ -13,8 +13,6 @@ const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
-    const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
-    const [loginVisible, setLoginVisible] = useState(false)
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -31,6 +29,8 @@ const App = () => {
         }
     }, [])
 
+    const blogFormRef = useRef()
+
     const handleLogin = async (event) => {
         event.preventDefault()
 
@@ -42,6 +42,9 @@ const App = () => {
             setPassword('')
             window.localStorage.setItem('user', JSON.stringify(user))
             setMessage('You were logged in')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
         } catch (exception) {
             setMessage('Wrong credentials')
             setTimeout(() => {
@@ -54,28 +57,20 @@ const App = () => {
         window.localStorage.removeItem('user')
         setUser(null)
         setMessage('You were logged out')
+        setTimeout(() => {
+            setMessage(null)
+        }, 5000)
     }
 
-    const handleTitleChange = (event) => {
-        setNewBlog({...newBlog, title: event.target.value})
-    }
-
-    const handleAuthorChange = (event) => {
-        setNewBlog({...newBlog, author: event.target.value})
-    }
-
-    const handleUrlChange = (event) => {
-        setNewBlog({...newBlog, url: event.target.value})
-    }
-
-    const addBlog = async (event) => {
-        event.preventDefault()
-
+    const addBlog = async (newBlog) => {
         try {
             const addedBlog = await blogService.create(newBlog)
             setBlogs(blogs.concat(addedBlog))
-            setNewBlog({title: '', author: '', url: ''})
             setMessage('Blog created')
+            blogFormRef.current.toggleVisibility()
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
         } catch (exception) {
             setMessage('Failed to create blog')
             setTimeout(() => {
@@ -86,13 +81,8 @@ const App = () => {
 
     const blogForm = () => {
         return (
-            <Togglable buttonLabel='new blog'>
-                <BlogForm
-                    newBlog={newBlog}
-                    handleTitleChange={handleTitleChange}
-                    handleAuthorChange={handleAuthorChange}
-                    handleUrlChange={handleUrlChange}
-                    addBlog={addBlog}/>
+            <Togglable buttonLabel='new blog' ref={blogFormRef}>
+                <BlogForm createBlog={addBlog}/>
             </Togglable>
         )
     }
