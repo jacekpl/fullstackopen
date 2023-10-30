@@ -34,4 +34,32 @@ describe('<Blog/>', () => {
         const likes = component.querySelector('.likes')
         expect(likes).toBeNull()
     });
+
+    test('show url and likes when button is clicked', async () => {
+        const blog = {
+            title: 'Test title',
+            author: 'Test author',
+            url: 'https://www.google.com',
+            likes: 5,
+            user: {
+                username: 'test'
+            }
+        }
+
+        const mockHandler = jest.fn()
+
+        const component = render(
+            <Blog blog={blog} updateBlog={mockHandler} removeBlog={mockHandler} user={blog.user}/>
+        )
+
+        const user = userEvent.setup()
+        const button = screen.getByText('view')
+        await user.click(button)
+
+        const url = component.container.querySelector('.url')
+        expect(url).toHaveTextContent('https://www.google.com')
+
+        const likes = component.container.querySelector('.likes')
+        expect(likes).toHaveTextContent('likes 5')
+    })
 });
