@@ -53,7 +53,7 @@ describe('<Blog/>', () => {
         )
 
         const user = userEvent.setup()
-        const button = screen.getByText('view')
+        const button = component.getByText('view')
         await user.click(button)
 
         const url = component.container.querySelector('.url')
@@ -61,5 +61,33 @@ describe('<Blog/>', () => {
 
         const likes = component.container.querySelector('.likes')
         expect(likes).toHaveTextContent('likes 5')
+    })
+
+    test('clicking the like button twice calls event handler twice', async () => {
+        const blog = {
+            title: 'Test title',
+            author: 'Test author',
+            url: 'https://www.google.com',
+            likes: 5,
+            user: {
+                username: 'test'
+            }
+        }
+
+        const mockHandler = jest.fn()
+
+        const component = render(
+            <Blog blog={blog} updateBlog={mockHandler} removeBlog={mockHandler} user={blog.user}/>
+        )
+
+        const user = userEvent.setup()
+        const button = component.getByText('view')
+        await user.click(button)
+
+        const likeButton = component.getByText('like')
+        await user.click(likeButton)
+        await user.click(likeButton)
+
+        expect(mockHandler.mock.calls).toHaveLength(2)
     })
 });
