@@ -31,14 +31,14 @@ const Blog = ({blog, updateBlog, removeBlog, user}) => {
     }
 
     return (<div style={blogStyle}>
-        {blog.title} {blog.author}
+        <span className="title">{blog.title}</span> <span className="author">{blog.author}</span>
         <button onClick={() => setVisible(!visible)}>{visible ? 'hide' : 'view'}</button>
         {visible && <>
-            <div>{blog.url}</div>
-            <div>likes {blog.likes ?? 0}
+            <div className="url">{blog.url}</div>
+            <div className="likes">likes {blog.likes ?? 0}
                 <button onClick={handleLike}>like</button>
             </div>
-            <div>{blog.user?.name ?? 'missing-name'}</div>
+            <div className="user">{blog.user?.name ?? 'missing-name'}</div>
             {blog.user.username === user.username &&
                 <button onClick={handleRemove}>remove</button>
             }
