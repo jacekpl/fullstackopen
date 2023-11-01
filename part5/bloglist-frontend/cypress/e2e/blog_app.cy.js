@@ -78,7 +78,7 @@ describe('Blog app', function () {
             cy.contains('Blog removed')
         })
 
-        it.only('only creator can see the delete button', function () {
+        it('only creator can see the delete button', function () {
             cy.createBlog({title: 'a blog created by cypress', author: 'cypress', url: 'http://cypress.io'})
             cy.contains('view').click()
             cy.contains('remove')
@@ -86,6 +86,19 @@ describe('Blog app', function () {
             cy.login({username: 'jacek', password: 'roza'})
             cy.contains('view').click()
             cy.contains('remove').should('not.exist')
+        })
+
+        it.only('a blog can be liked', function () {
+            cy.createBlog({title: 'second', author: 'cypress', url: 'http://cypress.io'})
+            cy.createBlog({title: 'first', author: 'cypress', url: 'http://cypress.io'})
+
+            cy.get('.blog').eq(0).contains('second')
+            cy.get('.blog').eq(1).contains('first')
+            cy.contains('first').parent().as('first')
+            cy.get('@first').contains('view').click()
+            cy.get('@first').contains('like').click()
+            cy.get('.blog').eq(0).contains('first')
+            cy.get('.blog').eq(1).contains('second')
         })
     })
 })
