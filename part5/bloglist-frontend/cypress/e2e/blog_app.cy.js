@@ -1,16 +1,23 @@
 describe('Blog app', function () {
     beforeEach(function () {
         cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
-        const user = {
-            name: 'Matti Luukkainen',
-            username: 'mluukkai',
-            password: 'salainen'
-        }
-        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+        const users = [
+            {
+                name: 'Matti Luukkainen',
+                username: 'mluukkai',
+                password: 'salainen'
+            },
+            {
+                name: 'Jacek Różański',
+                username: 'jacek',
+                password: 'roza'
+            }]
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, users[0])
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, users[1])
         cy.visit('')
     })
 
-    it('Login form is shown', function() {
+    it('Login form is shown', function () {
         cy.contains('log in to application')
         cy.contains('login').click()
         cy.contains('username')
@@ -61,7 +68,7 @@ describe('Blog app', function () {
             cy.contains('likes 1')
         })
 
-        it.only('a blog can be deleted', function () {
+        it('a blog can be deleted', function () {
             cy.get('html').should('not.contain', 'a blog created by cypress')
             cy.createBlog({title: 'a blog created by cypress', author: 'cypress', url: 'http://cypress.io'})
             cy.get('html').should('contain', 'a blog created by cypress')
@@ -69,6 +76,16 @@ describe('Blog app', function () {
             cy.contains('remove').click()
             cy.get('html').should('not.contain', 'a blog created by cypress')
             cy.contains('Blog removed')
+        })
+
+        it.only('only creator can see the delete button', function () {
+            cy.createBlog({title: 'a blog created by cypress', author: 'cypress', url: 'http://cypress.io'})
+            cy.contains('view').click()
+            cy.contains('remove')
+
+            cy.login({username: 'jacek', password: 'roza'})
+            cy.contains('view').click()
+            cy.contains('remove').should('not.exist')
         })
     })
 })
