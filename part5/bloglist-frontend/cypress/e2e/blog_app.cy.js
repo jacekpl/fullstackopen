@@ -10,6 +10,10 @@ describe('Blog app', function () {
         cy.visit('')
     })
 
+    it('Login form is shown', function() {
+        cy.contains('log in to application')
+    })
+
     it('front page can be opened', () => {
         cy.contains('log in to application')
     })
