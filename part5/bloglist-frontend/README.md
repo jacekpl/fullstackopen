@@ -21,3 +21,9 @@ docker compose exec client npm run test
 docker compose exec client npm run cypress:open
 ```
 
+## cypress e2e test
+
+```bash
+docker compose exec client npm run test:e2e
+```
+
