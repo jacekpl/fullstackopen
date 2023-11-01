@@ -53,12 +53,22 @@ describe('Blog app', function () {
             cy.get('html').should('contain', 'a blog created by cypress')
         })
 
-        it.only('a blog can be liked', function () {
+        it('a blog can be liked', function () {
             cy.createBlog({title: 'a blog created by cypress', author: 'cypress', url: 'http://cypress.io'})
             cy.contains('view').click()
             cy.contains('likes 0')
             cy.contains('like').click()
             cy.contains('likes 1')
+        })
+
+        it.only('a blog can be deleted', function () {
+            cy.get('html').should('not.contain', 'a blog created by cypress')
+            cy.createBlog({title: 'a blog created by cypress', author: 'cypress', url: 'http://cypress.io'})
+            cy.get('html').should('contain', 'a blog created by cypress')
+            cy.contains('view').click()
+            cy.contains('remove').click()
+            cy.get('html').should('not.contain', 'a blog created by cypress')
+            cy.contains('Blog removed')
         })
     })
 })
