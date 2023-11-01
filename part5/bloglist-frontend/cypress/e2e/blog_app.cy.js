@@ -12,6 +12,9 @@ describe('Blog app', function () {
 
     it('Login form is shown', function() {
         cy.contains('log in to application')
+        cy.contains('login').click()
+        cy.contains('username')
+        cy.contains('password')
     })
 
     describe('Login', function () {
@@ -35,44 +38,19 @@ describe('Blog app', function () {
         })
     })
 
-    it('front page can be opened', () => {
-        cy.contains('log in to application')
-    })
-
-    it('login for can be opened', function () {
-        cy.contains('login').click()
-    })
-
-    it('user can login', function () {
-        cy.contains('login').click()
-        cy.get('#username').type('mluukkai')
-        cy.get('#password').type('salainen')
-        cy.get('#login-button').click()
-
-        cy.contains('Matti Luukkainen logged in')
-    })
-
-    it('login fails with wrong password', function () {
-        cy.contains('login').click()
-        cy.get('#username').type('mluukkai')
-        cy.get('#password').type('wrong')
-        cy.get('#login-button').click()
-
-        cy.get('.notification').should('contain', 'Wrong credentials')
-        cy.get('html').should('not.contain', 'Matti Luukkainen logged in')
-    })
-
     describe('when logged in', function () {
         beforeEach(function () {
             cy.login({username: 'mluukkai', password: 'salainen'})
         })
 
-        it('a new blog can be created', function () {
+        it('a blog can be created', function () {
+            cy.get('html').should('not.contain', 'a blog created by cypress')
             cy.contains('new blog').click()
             cy.get('#input-title').type('a blog created by cypress')
             cy.get('#input-author').type('cypress')
             cy.get('#input-url').type('http://cypress.io')
             cy.get('#create-button').click()
+            cy.get('html').should('contain', 'a blog created by cypress')
         })
     })
 })
