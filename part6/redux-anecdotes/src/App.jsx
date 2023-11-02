@@ -1,5 +1,5 @@
 import {useSelector, useDispatch} from 'react-redux'
-import {asObject} from "./reducers/anecdoteReducer.js";
+import {createAnecdote} from "./reducers/anecdoteReducer.js";
 
 const App = () => {
     const anecdotes = useSelector(state => state)
@@ -14,9 +14,7 @@ const App = () => {
         event.preventDefault()
         const content = event.target.anecdote.value
         event.target.anecdote.value = ''
-        dispatch({
-            type: 'NEW_ANECDOTE', data: asObject(content)
-        })
+        dispatch(createAnecdote(content))
     }
 
     return (
