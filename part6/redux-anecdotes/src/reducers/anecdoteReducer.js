@@ -46,6 +46,5 @@ export const voteOnAnecdote = (id) => {
     }
 }
 
-
 export const {voteOn, setAnecdotes, appendAnecdote} = anecdoteSlice.actions
 export default anecdoteSlice.reducer
