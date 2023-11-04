@@ -7,3 +7,12 @@ services:
       - 5173:5173
     volumes:
       - .:/app
+
+  json-server:
+    restart: "no"
+    build:
+      target: json-server
+    ports:
+      - 3001:3001
+    volumes:
+      - ./db.json:/app/db.json
