@@ -5,7 +5,7 @@ const AnecdoteForm = () => {
     const queryClient = useQueryClient()
     const newAnecdoteMutation = useMutation({
         mutationFn: anecdote => axios.post('http://localhost:3001/anecdotes', anecdote).then(res => res.data),
-        onSuccess: (anecdote) => {
+        onSuccess: anecdote => {
             const anecdotes = queryClient.getQueryData(['anecdotes'])
             queryClient.setQueryData(['anecdotes'], anecdotes.concat(anecdote))
         }
