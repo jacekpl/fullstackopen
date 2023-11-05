@@ -8,11 +8,11 @@ services:
     volumes:
       - .:/app
 
-#  json-server:
-#    restart: "no"
-#    build:
-#      target: json-server
-#    ports:
-#      - 3001:3001
-#    volumes:
-#      - ./db.json:/app/db.json
+  server:
+    restart: "no"
+    build:
+      target: server
+    ports:
+      - 3001:3001
+    volumes:
+      - .:/app
