@@ -12,6 +12,10 @@ const AnecdoteForm = () => {
             queryClient.setQueryData(['anecdotes'], anecdotes.concat(anecdote))
             dispatch({type: "SHOW", payload: `anecdote ${anecdote.content} created`})
             setTimeout(() => dispatch({type: "HIDE"}), 5000)
+        },
+        onError: (response) => {
+            dispatch({type: "SHOW", payload: response.response.data.error})
+            setTimeout(() => dispatch({type: "HIDE"}), 5000)
         }
     })
 
