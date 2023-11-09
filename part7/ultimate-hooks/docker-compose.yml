@@ -1,0 +1,18 @@
+services:
+  client:
+    restart: "no"
+    build:
+      target: app
+    ports:
+      - 5173:5173
+    volumes:
+      - .:/app
+
+  server:
+    restart: "no"
+    build:
+      target: server
+    ports:
+      - 3001:3001
+    volumes:
+      - .:/app
