@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import {useState, useEffect, useRef, useContext} from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login.js";
@@ -6,10 +6,11 @@ import Notification from "./components/Notification.jsx";
 import LoginForm from "./components/LoginForm.jsx";
 import Togglable from "./components/Toggable.jsx";
 import BlogForm from "./components/BlogForm.jsx";
+import {useNotificationDispatch} from "./NotificationContext.jsx";
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
-    const [message, setMessage] = useState(null);
+    const notificationDispatch = useNotificationDispatch()
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -43,14 +44,14 @@ const App = () => {
             setUsername("");
             setPassword("");
             window.localStorage.setItem("user", JSON.stringify(user));
-            setMessage("You were logged in");
+            notificationDispatch({type: 'SHOW', payload: 'You were logged in'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         } catch (exception) {
-            setMessage("Wrong credentials");
+            notificationDispatch({type: 'SHOW', payload: 'Wrong credentials'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         }
     };
@@ -58,9 +59,9 @@ const App = () => {
     const handleLogout = () => {
         window.localStorage.removeItem("user");
         setUser(null);
-        setMessage("You were logged out");
+        notificationDispatch({type: 'SHOW', payload: 'You were logged out'})
         setTimeout(() => {
-            setMessage(null);
+            notificationDispatch({type: 'HIDE'})
         }, 5000);
     };
 
@@ -70,14 +71,14 @@ const App = () => {
             const blogs = await blogService.getAll();
             setBlogs(blogs);
             blogFormRef.current.toggleVisibility();
-            setMessage("Blog created");
+            notificationDispatch({type: 'SHOW', payload: 'Blog created'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         } catch (exception) {
-            setMessage("Failed to create blog");
+            notificationDispatch({type: 'SHOW', payload: 'Failed to create blog'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         }
     };
@@ -87,14 +88,14 @@ const App = () => {
             await blogService.update(blog.id, blog);
             const blogs = await blogService.getAll();
             setBlogs(blogs);
-            setMessage("Blog updated");
+            notificationDispatch({type: 'SHOW', payload: 'Blog updated'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         } catch (exception) {
-            setMessage("Failed to update blog");
+            notificationDispatch({type: 'SHOW', payload: 'Failed to update blog'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         }
     };
@@ -104,14 +105,14 @@ const App = () => {
             await blogService.remove(id);
             const blogs = await blogService.getAll();
             setBlogs(blogs);
-            setMessage("Blog removed");
+            notificationDispatch({type: 'SHOW', payload: 'Blog removed'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         } catch (exception) {
-            setMessage("Failed to remove blog");
+            notificationDispatch({type: 'SHOW', payload: 'Failed to remove blog'})
             setTimeout(() => {
-                setMessage(null);
+                notificationDispatch({type: 'HIDE'})
             }, 5000);
         }
     };
@@ -142,7 +143,7 @@ const App = () => {
         return (
             <div>
                 <h2>log in to application</h2>
-                <Notification message={message} />
+                <Notification/>
                 {loginForm()}
             </div>
         );
@@ -156,7 +157,7 @@ const App = () => {
                 </p>
 
                 <h2>create new</h2>
-                <Notification message={message} />
+                <Notification/>
                 {blogForm()}
 
                 <div>

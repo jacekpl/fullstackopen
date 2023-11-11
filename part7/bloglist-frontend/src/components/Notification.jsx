@@ -1,5 +1,8 @@
-const Notification = ({ message }) => {
-    if (message === null) {
+import {useNotificationValue} from "../NotificationContext.jsx";
+
+const Notification = () => {
+    const message = useNotificationValue()
+    if (message === null || message === '') {
         return null;
     }
 
