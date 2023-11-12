@@ -1,8 +1,12 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import {useRef, useState} from "react";
+import {useNotificationDispatch} from "../NotificationContext.jsx";
+import {useMutation, useQueryClient} from "react-query";
+import blogService from "../services/blogs.js";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = () => {
+    const notificationDispatch = useNotificationDispatch()
     const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
+    const queryClient = useQueryClient()
 
     const handleTitleChange = (event) => {
         setNewBlog({ ...newBlog, title: event.target.value });
@@ -16,10 +20,30 @@ const BlogForm = ({ createBlog }) => {
         setNewBlog({ ...newBlog, url: event.target.value });
     };
 
+    const newBlogMutation = useMutation({
+        mutationFn: blogService.create,
+        onSuccess: (newBlog) => {
+            const blogs = queryClient.getQueryData(['blogs'])
+            queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
+        },
+    })
+
     const addBlog = (event) => {
-        event.preventDefault();
-        createBlog(newBlog);
-        setNewBlog({ title: "", author: "", url: "" });
+        try {
+            event.preventDefault();
+            newBlogMutation.mutate(newBlog)
+            setNewBlog({ title: "", author: "", url: "" });
+            notificationDispatch({type: 'SHOW', payload: 'Blog created'})
+            setTimeout(() => {
+                notificationDispatch({type: 'HIDE'})
+            }, 5000);
+        } catch (exception) {
+            console.log(exception)
+            notificationDispatch({type: 'SHOW', payload: 'Failed to create blog'})
+            setTimeout(() => {
+                notificationDispatch({type: 'HIDE'})
+            }, 5000);
+        }
     };
 
     return (
@@ -56,10 +80,6 @@ const BlogForm = ({ createBlog }) => {
             </button>
         </>
     );
-};
-
-BlogForm.propTypes = {
-    createBlog: PropTypes.func.isRequired,
-};
+}
 
 export default BlogForm;

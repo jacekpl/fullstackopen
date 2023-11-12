@@ -1,7 +1,10 @@
-import { useState } from "react";
+import {useState} from "react";
 import PropTypes from "prop-types";
+import {useMutation, useQueryClient} from "react-query";
+import blogService from "../services/blogs.js";
+import {useNotificationDispatch} from "../NotificationContext.jsx";
 
-const Blog = ({ blog, updateBlog, removeBlog, user }) => {
+const Blog = ({blog, user}) => {
     const [visible, setVisible] = useState(false);
     const blogStyle = {
         paddingTop: 10,
@@ -10,6 +13,23 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
         borderWidth: 1,
         marginBottom: 5,
     };
+
+    const queryClient = useQueryClient()
+    const notificationDispatch = useNotificationDispatch()
+
+    const updateBlogMutation = useMutation({
+        mutationFn: (updatedBlog) => blogService.update(updatedBlog),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['blogs']})
+        },
+    })
+
+    const removeBlogMutation = useMutation({
+        mutationFn: (id) => blogService.remove(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['blogs'] })
+        },
+    })
 
     //if anyone should be able to like a blog (not only an author), we would need a separate endpoint in the backend for liking a blog. I haven't seen such requirement in the exercise, so I didn't implement it.
     const handleLike = async (event) => {
@@ -20,7 +40,18 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
             user: blog.user.id,
         };
 
-        await updateBlog(updatedBlog);
+        try {
+            await updateBlogMutation.mutate(updatedBlog)
+            notificationDispatch({type: 'SHOW', payload: 'Blog updated'})
+            setTimeout(() => {
+                notificationDispatch({type: 'HIDE'})
+            }, 5000);
+        } catch (exception) {
+            notificationDispatch({type: 'SHOW', payload: 'Failed to update blog'})
+            setTimeout(() => {
+                notificationDispatch({type: 'HIDE'})
+            }, 5000);
+        }
     };
 
     const handleRemove = (event) => {
@@ -28,8 +59,22 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
         if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
             removeBlog(blog.id);
         }
-    };
+    }
 
+    const removeBlog = async (id) => {
+        try {
+            removeBlogMutation.mutate(id)
+            notificationDispatch({type: 'SHOW', payload: 'Blog removed'})
+            setTimeout(() => {
+                notificationDispatch({type: 'HIDE'})
+            }, 5000);
+        } catch (exception) {
+            notificationDispatch({type: 'SHOW', payload: 'Failed to remove blog'})
+            setTimeout(() => {
+                notificationDispatch({type: 'HIDE'})
+            }, 5000);
+        }
+    };
     return (
         <div style={blogStyle} className="blog">
             <span className="title">{blog.title}</span> <span className="author">{blog.author}</span>
@@ -53,8 +98,6 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
 
 Blog.propTypes = {
     blog: PropTypes.object.isRequired,
-    updateBlog: PropTypes.func.isRequired,
-    removeBlog: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
 };
 
