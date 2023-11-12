@@ -4,14 +4,13 @@ import blogService from "./services/blogs";
 import loginService from "./services/login.js";
 import Notification from "./components/Notification.jsx";
 import LoginForm from "./components/LoginForm.jsx";
-import Togglable from "./components/Toggable.jsx";
+import Togglable from "./components/Togglable.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import {useNotificationDispatch} from "./NotificationContext.jsx";
-import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 
 const App = () => {
     const notificationDispatch = useNotificationDispatch()
-    const queryClient = useQueryClient()
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -26,12 +25,6 @@ const App = () => {
     }, []);
 
     const blogFormRef = useRef();
-    const newBlogMutation = useMutation({
-        mutationFn: blogService.create,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['blogs'] })
-        },
-    })
 
     const result = useQuery({
         queryKey: ['blogs'],
@@ -75,62 +68,10 @@ const App = () => {
         }, 5000);
     };
 
-    const addBlog = async (newBlog) => {
-        try {
-            await newBlogMutation.mutate(newBlog)
-            await blogService.getAll();
-            blogFormRef.current.toggleVisibility();
-            notificationDispatch({type: 'SHOW', payload: 'Blog created'})
-            setTimeout(() => {
-                notificationDispatch({type: 'HIDE'})
-            }, 5000);
-        } catch (exception) {
-            console.log(exception)
-            notificationDispatch({type: 'SHOW', payload: 'Failed to create blog'})
-            setTimeout(() => {
-                notificationDispatch({type: 'HIDE'})
-            }, 5000);
-        }
-    };
-
-    const updateBlog = async (blog) => {
-        try {
-            await blogService.update(blog.id, blog);
-            const blogs = await blogService.getAll();
-            setBlogs(blogs);
-            notificationDispatch({type: 'SHOW', payload: 'Blog updated'})
-            setTimeout(() => {
-                notificationDispatch({type: 'HIDE'})
-            }, 5000);
-        } catch (exception) {
-            notificationDispatch({type: 'SHOW', payload: 'Failed to update blog'})
-            setTimeout(() => {
-                notificationDispatch({type: 'HIDE'})
-            }, 5000);
-        }
-    };
-
-    const removeBlog = async (id) => {
-        try {
-            await blogService.remove(id);
-            const blogs = await blogService.getAll();
-            setBlogs(blogs);
-            notificationDispatch({type: 'SHOW', payload: 'Blog removed'})
-            setTimeout(() => {
-                notificationDispatch({type: 'HIDE'})
-            }, 5000);
-        } catch (exception) {
-            notificationDispatch({type: 'SHOW', payload: 'Failed to remove blog'})
-            setTimeout(() => {
-                notificationDispatch({type: 'HIDE'})
-            }, 5000);
-        }
-    };
-
     const blogForm = () => {
         return (
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
-                <BlogForm createBlog={addBlog}/>
+                <BlogForm/>
             </Togglable>
         );
     };
@@ -172,7 +113,7 @@ const App = () => {
 
                 <div>
                     {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user}/>
+                        <Blog key={blog.id} blog={blog} user={user}/>
                     ))}
                 </div>
             </div>
