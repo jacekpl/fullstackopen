@@ -1,9 +1,9 @@
-import {useRef, useState} from "react";
+import {forwardRef, useRef, useState} from "react";
 import {useNotificationDispatch} from "../NotificationContext.jsx";
 import {useMutation, useQueryClient} from "react-query";
 import blogService from "../services/blogs.js";
 
-const BlogForm = () => {
+const BlogForm = forwardRef((props, ref) => {
     const notificationDispatch = useNotificationDispatch()
     const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
     const queryClient = useQueryClient()
@@ -34,6 +34,7 @@ const BlogForm = () => {
             newBlogMutation.mutate(newBlog)
             setNewBlog({ title: "", author: "", url: "" });
             notificationDispatch({type: 'SHOW', payload: 'Blog created'})
+            ref.current.toggleVisibility();
             setTimeout(() => {
                 notificationDispatch({type: 'HIDE'})
             }, 5000);
@@ -80,6 +81,6 @@ const BlogForm = () => {
             </button>
         </>
     );
-}
+})
 
 export default BlogForm;
