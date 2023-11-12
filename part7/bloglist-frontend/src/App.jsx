@@ -7,21 +7,14 @@ import LoginForm from "./components/LoginForm.jsx";
 import Togglable from "./components/Toggable.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import {useNotificationDispatch} from "./NotificationContext.jsx";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 
 const App = () => {
-    const [blogs, setBlogs] = useState([]);
     const notificationDispatch = useNotificationDispatch()
+    const queryClient = useQueryClient()
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        async function fetchData() {
-            const blogs = await blogService.getAll();
-            setBlogs(blogs);
-        }
-        fetchData();
-    }, []);
 
     useEffect(() => {
         const loggedUser = window.localStorage.getItem("user");
@@ -33,12 +26,29 @@ const App = () => {
     }, []);
 
     const blogFormRef = useRef();
+    const newBlogMutation = useMutation({
+        mutationFn: blogService.create,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['blogs'] })
+        },
+    })
+
+    const result = useQuery({
+        queryKey: ['blogs'],
+        queryFn: async () => await blogService.getAll()
+    })
+
+    if (result.isLoading) {
+        return <div>loading data...</div>
+    }
+
+    const blogs = result.data
 
     const handleLogin = async (event) => {
         event.preventDefault();
 
         try {
-            const user = await loginService.login({ username, password });
+            const user = await loginService.login({username, password});
             blogService.setToken(user.token);
             setUser(user);
             setUsername("");
@@ -67,15 +77,15 @@ const App = () => {
 
     const addBlog = async (newBlog) => {
         try {
-            await blogService.create(newBlog);
-            const blogs = await blogService.getAll();
-            setBlogs(blogs);
+            await newBlogMutation.mutate(newBlog)
+            await blogService.getAll();
             blogFormRef.current.toggleVisibility();
             notificationDispatch({type: 'SHOW', payload: 'Blog created'})
             setTimeout(() => {
                 notificationDispatch({type: 'HIDE'})
             }, 5000);
         } catch (exception) {
+            console.log(exception)
             notificationDispatch({type: 'SHOW', payload: 'Failed to create blog'})
             setTimeout(() => {
                 notificationDispatch({type: 'HIDE'})
@@ -120,7 +130,7 @@ const App = () => {
     const blogForm = () => {
         return (
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
-                <BlogForm createBlog={addBlog} />
+                <BlogForm createBlog={addBlog}/>
             </Togglable>
         );
     };
@@ -162,7 +172,7 @@ const App = () => {
 
                 <div>
                     {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user} />
+                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user}/>
                     ))}
                 </div>
             </div>
