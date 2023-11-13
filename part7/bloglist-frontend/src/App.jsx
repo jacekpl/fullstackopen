@@ -1,5 +1,4 @@
 import {useState, useEffect, useRef, useContext} from "react";
-import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login.js";
 import Notification from "./components/Notification.jsx";
@@ -7,8 +6,10 @@ import LoginForm from "./components/LoginForm.jsx";
 import Togglable from "./components/Togglable.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import {useNotificationDispatch} from "./NotificationContext.jsx";
-import {useQuery} from "react-query";
 import UserContext from "./UserContext.jsx";
+import {BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
+import Users from "./components/Users.jsx";
+import Blogs from "./components/Blogs.jsx";
 
 const App = () => {
     const notificationDispatch = useNotificationDispatch()
@@ -26,17 +27,6 @@ const App = () => {
     }, []);
 
     const blogFormRef = useRef();
-
-    const result = useQuery({
-        queryKey: ['blogs'],
-        queryFn: async () => await blogService.getAll()
-    })
-
-    if (result.isLoading) {
-        return <div>loading data...</div>
-    }
-
-    const blogs = result.data
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -108,15 +98,13 @@ const App = () => {
                     <button onClick={handleLogout}>logout</button>
                 </p>
 
-                <h2>create new</h2>
-                <Notification/>
-                {blogForm()}
+                <Router>
+                    <Routes>
+                        <Route path="/users" element={<Users />} />
+                        <Route path="/" element={<Blogs blogForm={blogForm} />} />
+                    </Routes>
 
-                <div>
-                    {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} />
-                    ))}
-                </div>
+                </Router>
             </div>
         );
     }

@@ -65,7 +65,7 @@ const Blog = ({blog}) => {
 
     const removeBlog = async (id) => {
         try {
-            removeBlogMutation.mutate(id)
+            await removeBlogMutation.mutate(id)
             notificationDispatch({type: 'SHOW', payload: 'Blog removed'})
             setTimeout(() => {
                 notificationDispatch({type: 'HIDE'})
