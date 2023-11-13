@@ -3,8 +3,10 @@ import PropTypes from "prop-types";
 import {useMutation, useQueryClient} from "react-query";
 import blogService from "../services/blogs.js";
 import {useNotificationDispatch} from "../NotificationContext.jsx";
+import {useUser} from "../UserContext.jsx";
 
-const Blog = ({blog, user}) => {
+const Blog = ({blog}) => {
+    const user = useUser()
     const [visible, setVisible] = useState(false);
     const blogStyle = {
         paddingTop: 10,
@@ -97,8 +99,7 @@ const Blog = ({blog, user}) => {
 };
 
 Blog.propTypes = {
-    blog: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
+    blog: PropTypes.object.isRequired
 };
 
 export default Blog;
