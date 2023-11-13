@@ -1,4 +1,4 @@
-import {forwardRef, useRef, useState} from "react";
+import {forwardRef, useState} from "react";
 import {useNotificationDispatch} from "../NotificationContext.jsx";
 import {useMutation, useQueryClient} from "react-query";
 import blogService from "../services/blogs.js";
@@ -23,8 +23,9 @@ const BlogForm = forwardRef((props, ref) => {
     const newBlogMutation = useMutation({
         mutationFn: blogService.create,
         onSuccess: (newBlog) => {
-            const blogs = queryClient.getQueryData(['blogs'])
-            queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
+            queryClient.invalidateQueries(['blogs'])
+            //const blogs = queryClient.getQueryData(['blogs'])
+            //queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
         },
     })
 

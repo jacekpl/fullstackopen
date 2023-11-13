@@ -8,18 +8,19 @@ import Togglable from "./components/Togglable.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import {useNotificationDispatch} from "./NotificationContext.jsx";
 import {useQuery} from "react-query";
+import UserContext from "./UserContext.jsx";
 
 const App = () => {
     const notificationDispatch = useNotificationDispatch()
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [user, setUser] = useState(null);
+    const [user, userDispatch] = useContext(UserContext)
 
     useEffect(() => {
-        const loggedUser = window.localStorage.getItem("user");
+        const loggedUser = window.localStorage.getItem("user")
         if (loggedUser) {
             const user = JSON.parse(loggedUser);
-            setUser(user);
+            userDispatch({type: 'LOGIN', payload: user})
             blogService.setToken(user.token);
         }
     }, []);
@@ -43,10 +44,10 @@ const App = () => {
         try {
             const user = await loginService.login({username, password});
             blogService.setToken(user.token);
-            setUser(user);
             setUsername("");
             setPassword("");
             window.localStorage.setItem("user", JSON.stringify(user));
+            userDispatch({type: 'LOGIN', payload: user})
             notificationDispatch({type: 'SHOW', payload: 'You were logged in'})
             setTimeout(() => {
                 notificationDispatch({type: 'HIDE'})
@@ -61,7 +62,7 @@ const App = () => {
 
     const handleLogout = () => {
         window.localStorage.removeItem("user");
-        setUser(null);
+        userDispatch({type: 'LOGOUT'})
         notificationDispatch({type: 'SHOW', payload: 'You were logged out'})
         setTimeout(() => {
             notificationDispatch({type: 'HIDE'})
@@ -113,7 +114,7 @@ const App = () => {
 
                 <div>
                     {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} user={user}/>
+                        <Blog key={blog.id} blog={blog} />
                     ))}
                 </div>
             </div>
