@@ -1,6 +1,5 @@
 import Notification from "./Notification.jsx";
 import * as PropTypes from "prop-types";
-import Blog from "./Blog.jsx";
 import {useQuery} from "react-query";
 import blogService from "../services/blogs.js";
 import {Link} from "react-router-dom";
@@ -26,7 +25,6 @@ const Blogs = ({blogForm}) => {
     };
 
     return <>
-        <h2>create new</h2>
         <Notification/>
         {blogForm()}
 

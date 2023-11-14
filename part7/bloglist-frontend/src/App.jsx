@@ -7,7 +7,7 @@ import Togglable from "./components/Togglable.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import {useNotificationDispatch} from "./NotificationContext.jsx";
 import UserContext from "./UserContext.jsx";
-import {BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
+import {Routes, Route, Link} from 'react-router-dom'
 import Users from "./components/Users.jsx";
 import Blogs from "./components/Blogs.jsx";
 import User from "./components/User.jsx";
@@ -83,6 +83,11 @@ const App = () => {
         );
     };
 
+    const menu = {
+        backgroundColor: 'lightgray',
+        padding: 5
+    }
+
     if (user === null) {
         return (
             <div>
@@ -94,21 +99,20 @@ const App = () => {
     } else {
         return (
             <div>
-                <h2>blogs</h2>
-                <p>
-                    {user.name} logged in
+                <div style={menu}>
+                    <Link to={'/'}>blogs</Link>&nbsp;
+                    <Link to={'users'}>users</Link>&nbsp;
+                    {user.name} logged in&nbsp;
                     <button onClick={handleLogout}>logout</button>
-                </p>
+                </div>
 
-                <Router>
-                    <Routes>
-                        <Route path="/users/:id" element={<User />} />
-                        <Route path="/users" element={<Users />} />
-                        <Route path="/blogs/:id" element={<Blog />} />
-                        <Route path="/" element={<Blogs blogForm={blogForm} />} />
-                    </Routes>
-
-                </Router>
+                <h2>blog app</h2>
+                <Routes>
+                    <Route path="/users/:id" element={<User/>}/>
+                    <Route path="/users" element={<Users/>}/>
+                    <Route path="/blogs/:id" element={<Blog/>}/>
+                    <Route path="/" element={<Blogs blogForm={blogForm}/>}/>
+                </Routes>
             </div>
         );
     }
