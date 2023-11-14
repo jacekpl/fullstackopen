@@ -3,6 +3,7 @@ import * as PropTypes from "prop-types";
 import Blog from "./Blog.jsx";
 import {useQuery} from "react-query";
 import blogService from "../services/blogs.js";
+import {Link} from "react-router-dom";
 
 const Blogs = ({blogForm}) => {
     const result = useQuery({
@@ -16,6 +17,13 @@ const Blogs = ({blogForm}) => {
 
     const blogs = result.data
 
+    const blogStyle = {
+        paddingTop: 10,
+        paddingLeft: 2,
+        border: "solid",
+        borderWidth: 1,
+        marginBottom: 5,
+    };
 
     return <>
         <h2>create new</h2>
@@ -24,7 +32,7 @@ const Blogs = ({blogForm}) => {
 
         <div>
             {blogs.map((blog) => (
-                <Blog key={blog.id} blog={blog} />
+                <div key={blog.id} style={blogStyle}><Link to={'blogs/' + blog.id}>{blog.title}</Link></div>
             ))}
         </div>
     </>;
