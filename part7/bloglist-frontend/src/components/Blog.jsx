@@ -1,9 +1,9 @@
-import {useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import blogService from "../services/blogs.js";
 import {useNotificationDispatch} from "../NotificationContext.jsx";
 import {useUser} from "../UserContext.jsx";
 import {useParams} from "react-router-dom";
+import Comments from "./Comments.jsx";
 
 const Blog = () => {
     const blogId = useParams().id
@@ -84,7 +84,7 @@ const Blog = () => {
     return (
         <div className="blog">
             <h1 className="title">{blog.title}</h1> <span className="author">{blog.author}</span>
-            <>
+            <div>
                 <div className="url"><a href={blog.url}>{blog.url}</a></div>
                 <div className="likes">
                     likes {blog.likes ?? 0}
@@ -92,8 +92,9 @@ const Blog = () => {
                 </div>
                 <div className="user">{blog.user?.name ?? "missing-name"}</div>
                 {blog.user.username === user.username && <button onClick={handleRemove}>remove</button>}
-            </>
+            </div>
 
+            <Comments blogId={blog.id} comments={blog.comments}/>
         </div>
     );
 };
