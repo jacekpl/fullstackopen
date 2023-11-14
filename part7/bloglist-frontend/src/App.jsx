@@ -11,6 +11,7 @@ import {BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
 import Users from "./components/Users.jsx";
 import Blogs from "./components/Blogs.jsx";
 import User from "./components/User.jsx";
+import Blog from "./components/Blog.jsx";
 
 const App = () => {
     const notificationDispatch = useNotificationDispatch()
@@ -103,6 +104,7 @@ const App = () => {
                     <Routes>
                         <Route path="/users/:id" element={<User />} />
                         <Route path="/users" element={<Users />} />
+                        <Route path="/blogs/:id" element={<Blog />} />
                         <Route path="/" element={<Blogs blogForm={blogForm} />} />
                     </Routes>
 
