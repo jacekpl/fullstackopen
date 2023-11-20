@@ -6,7 +6,12 @@ const Notification = () => {
         return null;
     }
 
-    return <p className="notification">{message}</p>;
+    return (
+        <div className="notification bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 my-1" role="alert">
+            <p className="font-bold">Message</p>
+            <p>{message}</p>
+        </div>
+    )
 };
 
 export default Notification;

@@ -83,15 +83,15 @@ const Blog = () => {
 
     return (
         <div className="blog">
-            <h1 className="title">{blog.title}</h1> <span className="author">{blog.author}</span>
+            <h1 className="title font-bold">{blog.title}</h1> <span className="author">{blog.author}</span>
             <div>
-                <div className="url"><a href={blog.url}>{blog.url}</a></div>
+                <div className="url"><a href={blog.url} className="no-underline hover:underline text-blue-500">{blog.url}</a></div>
                 <div className="likes">
                     likes {blog.likes ?? 0}
-                    <button onClick={handleLike}>like</button>
+                    <button onClick={handleLike} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded my-2 ml-1">like</button>
                 </div>
                 <div className="user">{blog.user?.name ?? "missing-name"}</div>
-                {blog.user.username === user.username && <button onClick={handleRemove}>remove</button>}
+                {blog.user.username === user.username && <button onClick={handleRemove} className="bg-red-500 hover:bg-red-700 text-white font-bold py-0 px-4 rounded my-2">remove</button>}
             </div>
 
             <Comments blogId={blog.id} comments={blog.comments}/>

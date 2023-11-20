@@ -51,7 +51,7 @@ const BlogForm = forwardRef((props, ref) => {
     return (
         <>
             <div>
-                title
+                <label className="block">title</label>
                 <input
                     type="text"
                     id="input-title"
@@ -62,7 +62,7 @@ const BlogForm = forwardRef((props, ref) => {
             </div>
 
             <div>
-                author
+                <label className="block">author</label>
                 <input
                     type="text"
                     id="input-author"
@@ -73,11 +73,11 @@ const BlogForm = forwardRef((props, ref) => {
             </div>
 
             <div>
-                url
+                <label className="block">url</label>
                 <input type="text" id="input-url" role="input-url" value={newBlog.url} onChange={handleUrlChange} />
             </div>
 
-            <button id="create-button" onClick={addBlog}>
+            <button id="create-button" onClick={addBlog} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded my-2 mr-1">
                 create
             </button>
         </>

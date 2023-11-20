@@ -14,20 +14,21 @@ const Users = () => {
 
     return (
         <div>
-            users
-            <table>
+            <h2 className="text-bold">Users</h2>
+            <table className="border-collapse table-auto w-full text-sm ">
                 <thead>
-                <tr>
+                <tr className="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
                     <td></td>
-                    <td><b>blogs created</b></td>
+                    <td>blogs created</td>
                 </tr>
                 </thead>
-                <tbody>
-                {result.data.map(function(user) {
+                <tbody className="bg-white dark:bg-slate-800">
+                {result.data.map(function (user) {
                     return (
                         <tr key={user.id}>
-                            <td><Link to={"/users/" + user.id}>{user.name}</Link></td>
-                            <td>{user.blogs.length}</td>
+                            <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400"><Link
+                                to={"/users/" + user.id}>{user.name}</Link></td>
+                            <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{user.blogs.length}</td>
                         </tr>
                     )
                 })}

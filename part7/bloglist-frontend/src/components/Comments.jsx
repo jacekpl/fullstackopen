@@ -24,8 +24,8 @@ const Comments = ({blogId, comments}) => {
     })
 
     return (
-        <>
-            <h2>comments</h2>
+        <div className="my-1">
+            <h2><strong>Comments</strong></h2>
 
             <div>
                 <input
@@ -35,15 +35,15 @@ const Comments = ({blogId, comments}) => {
                     value={comment}
                     onChange={handleCommentChange}
                 />
-                <button onClick={addComment}>add comment</button>
+                <button onClick={addComment} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded my-2 ml-1">add comment</button>
             </div>
 
             <div>
                 <ul>
-                    {comments.map(c => <li>{c}</li>)}
+                    {comments.map(c => <li className="list-disc">{c}</li>)}
                 </ul>
             </div>
-        </>
+        </div>
     )
 }
 
