@@ -3,7 +3,7 @@ const LoginForm = ({ handleLogin, username, password, setUsername, setPassword }
     return (
         <form onSubmit={handleLogin}>
             <div>
-                username
+                <label className="block">username</label>
                 <input
                     type="text"
                     id="username"
@@ -13,7 +13,7 @@ const LoginForm = ({ handleLogin, username, password, setUsername, setPassword }
                 />
             </div>
             <div>
-                password
+                <label className="block">password</label>
                 <input
                     type="password"
                     id="password"
@@ -22,7 +22,7 @@ const LoginForm = ({ handleLogin, username, password, setUsername, setPassword }
                     onChange={({ target }) => setPassword(target.value)}
                 />
             </div>
-            <button type="submit" id="login-button">
+            <button type="submit" id="login-button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded my-1">
                 login
             </button>
         </form>

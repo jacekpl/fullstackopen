@@ -1,17 +1,17 @@
-import {useState, useEffect, useRef, useContext} from "react";
-import blogService from "./services/blogs";
-import loginService from "./services/login.js";
-import Notification from "./components/Notification.jsx";
-import LoginForm from "./components/LoginForm.jsx";
-import Togglable from "./components/Togglable.jsx";
-import BlogForm from "./components/BlogForm.jsx";
-import {useNotificationDispatch} from "./NotificationContext.jsx";
-import UserContext from "./UserContext.jsx";
+import {useState, useEffect, useRef, useContext} from "react"
+import blogService from "./services/blogs"
+import loginService from "./services/login.js"
+import Notification from "./components/Notification.jsx"
+import LoginForm from "./components/LoginForm.jsx"
+import Togglable from "./components/Togglable.jsx"
+import BlogForm from "./components/BlogForm.jsx"
+import {useNotificationDispatch} from "./NotificationContext.jsx"
+import UserContext from "./UserContext.jsx"
 import {Routes, Route, Link} from 'react-router-dom'
-import Users from "./components/Users.jsx";
-import Blogs from "./components/Blogs.jsx";
-import User from "./components/User.jsx";
-import Blog from "./components/Blog.jsx";
+import Users from "./components/Users.jsx"
+import Blogs from "./components/Blogs.jsx"
+import User from "./components/User.jsx"
+import Blog from "./components/Blog.jsx"
 
 const App = () => {
     const notificationDispatch = useNotificationDispatch()
@@ -83,15 +83,10 @@ const App = () => {
         );
     };
 
-    const menu = {
-        backgroundColor: 'lightgray',
-        padding: 5
-    }
-
     if (user === null) {
         return (
-            <div>
-                <h2>log in to application</h2>
+            <div className="container mx-auto">
+                <h2>Log in to application</h2>
                 <Notification/>
                 {loginForm()}
             </div>
@@ -99,20 +94,39 @@ const App = () => {
     } else {
         return (
             <div>
-                <div style={menu}>
-                    <Link to={'/'}>blogs</Link>&nbsp;
-                    <Link to={'users'}>users</Link>&nbsp;
-                    {user.name} logged in&nbsp;
-                    <button onClick={handleLogout}>logout</button>
-                </div>
+                <nav className="bg-gray-800">
+                    <div className="container mx-auto">
+                        <div className="relative flex h-16 items-center justify-between">
+                            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                                <div className="flex flex-shrink-0 items-center">
+                                    <h2 className="text-white">blog app</h2>
+                                </div>
+                                <div className="hidden sm:ml-6 sm:block">
+                                    <div className="flex space-x-4">
+                                        <Link to={'/'} className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">blogs</Link>
+                                        <Link to={'users'} className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">users</Link>&nbsp;
+                                        <div className="text-white flex flex-shrink-0 items-center">
+                                            {user.name} logged in
+                                        </div>
 
-                <h2>blog app</h2>
-                <Routes>
-                    <Route path="/users/:id" element={<User/>}/>
-                    <Route path="/users" element={<Users/>}/>
-                    <Route path="/blogs/:id" element={<Blog/>}/>
-                    <Route path="/" element={<Blogs blogForm={blogForm}/>}/>
-                </Routes>
+                                        <div className="text-white flex flex-shrink-0 items-center">
+                                            <button onClick={handleLogout} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded">logout</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div className="container mx-auto py-2">
+                    <Routes>
+                        <Route path="/users/:id" element={<User/>}/>
+                        <Route path="/users" element={<Users/>}/>
+                        <Route path="/blogs/:id" element={<Blog/>}/>
+                        <Route path="/" element={<Blogs blogForm={blogForm}/>}/>
+                    </Routes>
+                </div>
             </div>
         );
     }

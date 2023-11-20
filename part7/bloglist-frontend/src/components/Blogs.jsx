@@ -16,21 +16,15 @@ const Blogs = ({blogForm}) => {
 
     const blogs = result.data
 
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: "solid",
-        borderWidth: 1,
-        marginBottom: 5,
-    };
-
     return <>
         <Notification/>
         {blogForm()}
 
         <div>
             {blogs.map((blog) => (
-                <div key={blog.id} style={blogStyle}><Link to={'blogs/' + blog.id}>{blog.title}</Link></div>
+                <div key={blog.id} className="flex items-center rounded-md p-1.5 bg-gray-200 text-black my-1">
+                    <Link to={'blogs/' + blog.id} className="no-underline hover:underline text-blue-900">{blog.title}</Link>
+                </div>
             ))}
         </div>
     </>;
