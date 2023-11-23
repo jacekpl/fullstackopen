@@ -176,7 +176,6 @@ const resolvers = {
             if (!author) {
                 return null
             }
-            console.log(args)
 
             const updatedAuthor = { ...author, born: args.setBornTo }
             authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
