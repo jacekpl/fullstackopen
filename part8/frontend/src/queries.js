@@ -20,7 +20,6 @@ query {
 }
 `
 
-
 export const ADD_BOOK = gql`
 mutation createBook($title: String!, $author: String!, $published: Int!, $genres: [String!]!) {
 addBook(
@@ -36,3 +35,11 @@ addBook(
   }
 }  
 `
+
+export const UPDATE_BIRTH_DATE = gql`
+mutation editAuthor($name: String!, $born: Int!) {
+    editAuthor(name: $name, setBornTo: $born) {
+        name
+        born
+    }
+}`
