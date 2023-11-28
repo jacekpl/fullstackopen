@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {useMutation} from "@apollo/client";
-import {ADD_BOOK, ALL_AUTHORS, ALL_BOOKS, UPDATE_BIRTH_DATE} from "../queries.js";
+import {ALL_AUTHORS, ALL_BOOKS, UPDATE_BIRTH_DATE} from "../queries.js";
 
 const SetBirthYear = ({authors}) => {
     const [name, setName] = useState('')
