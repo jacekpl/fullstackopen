@@ -1,10 +1,10 @@
 const {ApolloServer} = require('@apollo/server')
 const {startStandaloneServer} = require('@apollo/server/standalone')
-const {v1: uuid} = require('uuid')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Author = require('./models/Author')
 const Book = require('./models/Book')
+const {GraphQLError} = require("graphql/error");
 
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI
@@ -67,7 +67,7 @@ const resolvers = {
             }
 
             if (args.author && !args.genre) {
-                const author = await Author.findOne({ name: args.author });
+                const author = await Author.findOne({name: args.author});
                 books = Book.find({author: author._id})
             }
 
@@ -76,7 +76,7 @@ const resolvers = {
             }
 
             if (args.genre && args.author) {
-                const author = await Author.findOne({ name: args.author });
+                const author = await Author.findOne({name: args.author});
                 books = Book.find({genres: {$in: [args.genre]}, author: author._id})
             }
 
@@ -87,7 +87,7 @@ const resolvers = {
     },
     Author: {
         bookCount: async (root) => {
-            return Book.collection.countDocuments({ author: root._id })
+            return Book.collection.countDocuments({author: root._id})
         }
     },
     Mutation: {
@@ -100,7 +100,17 @@ const resolvers = {
             }
 
             const book = new Book({...args, author})
-            return book.save()
+            try {
+                return book.save()
+            } catch (error) {
+                throw new GraphQLError('Saving book failed', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args,
+                        error
+                    }
+                })
+            }
         },
 
         editAuthor: async (root, args) => {
@@ -110,8 +120,18 @@ const resolvers = {
             }
 
             author.born = args.setBornTo
-            await author.save()
-            return author
+            try {
+                await author.save()
+                return author
+            } catch (error) {
+                throw new GraphQLError('Saving born failed', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.setBornTo,
+                        error
+                    }
+                })
+            }
         }
     }
 }
