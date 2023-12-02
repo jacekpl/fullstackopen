@@ -37,6 +37,7 @@ const typeDefs = `
   
   type User {
     username: String!
+    favoriteGenre: String!
     id: ID!
   }
     
@@ -67,6 +68,7 @@ const typeDefs = `
      
     createUser(
       username: String!
+      favoriteGenre: String!
     ): User
   
     login(
@@ -179,7 +181,7 @@ const resolvers = {
         },
 
         createUser: async (root, args) => {
-            const user = new User({username: args.username})
+            const user = new User({username: args.username, favoriteGenre: args.favoriteGenre})
 
             return user.save()
                 .catch(error => {
