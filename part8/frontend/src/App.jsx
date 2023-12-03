@@ -3,8 +3,9 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from "./components/LoginForm.jsx";
-import {useApolloClient} from "@apollo/client";
+import {useApolloClient, useSubscription} from "@apollo/client";
 import Recommend from "./components/Recommend.jsx";
+import {BOOK_ADDED} from "./queries.js";
 
 const App = () => {
     const [page, setPage] = useState('authors')
@@ -24,6 +25,13 @@ const App = () => {
             </div>
         )
     }
+
+    useSubscription(BOOK_ADDED, {
+        onData: ({ data }) => {
+            alert('book added')
+            console.log(data)
+        }
+    })
 
     return (
         <div>
