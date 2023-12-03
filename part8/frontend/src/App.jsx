@@ -5,7 +5,24 @@ import NewBook from './components/NewBook'
 import LoginForm from "./components/LoginForm.jsx";
 import {useApolloClient, useSubscription} from "@apollo/client";
 import Recommend from "./components/Recommend.jsx";
-import {BOOK_ADDED} from "./queries.js";
+import {ALL_BOOKS, BOOK_ADDED} from "./queries.js";
+
+export const updateCache = (cache, query, addedBook) => {
+    // helper that is used to eliminate saving same person twice
+    const uniqByName = (a) => {
+        let seen = new Set()
+        return a.filter((item) => {
+            let k = item.title
+            return seen.has(k) ? false : seen.add(k)
+        })
+    }
+
+    cache.updateQuery(query, ({ allBooks }) => {
+        return {
+            allBooks: uniqByName(allBooks.concat(addedBook)),
+        }
+    })
+}
 
 const App = () => {
     const [page, setPage] = useState('authors')
@@ -29,7 +46,8 @@ const App = () => {
     useSubscription(BOOK_ADDED, {
         onData: ({ data }) => {
             alert('book added')
-            console.log(data)
+            const addedBook = data.data.bookAdded
+            updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
         }
     })
 
