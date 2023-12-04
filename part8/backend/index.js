@@ -1,7 +1,7 @@
 const {ApolloServer} = require('@apollo/server')
-const { expressMiddleware } = require('@apollo/server/express4')
-const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer')
-const { makeExecutableSchema } = require('@graphql-tools/schema')
+const {expressMiddleware} = require('@apollo/server/express4')
+const {ApolloServerPluginDrainHttpServer} = require('@apollo/server/plugin/drainHttpServer')
+const {makeExecutableSchema} = require('@graphql-tools/schema')
 const express = require('express')
 const cors = require('cors')
 const http = require('http')
@@ -11,8 +11,10 @@ const User = require('./models/User')
 const jwt = require('jsonwebtoken')
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
-const { WebSocketServer } = require('ws')
-const { useServer } = require('graphql-ws/lib/use/ws')
+const {WebSocketServer} = require('ws')
+const {useServer} = require('graphql-ws/lib/use/ws')
+const DataLoader = require("dataloader")
+const Book = require("./models/Book")
 
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI
@@ -25,6 +27,8 @@ mongoose.connect(MONGODB_URI)
     .catch((error) => {
         console.log('error connection to MongoDB:', error.message)
     })
+
+mongoose.set('debug', true);
 
 const server = new ApolloServer({
     typeDefs,
@@ -40,13 +44,36 @@ const start = async () => {
         path: '/',
     })
 
-    const schema = makeExecutableSchema({ typeDefs, resolvers })
-    const serverCleanup = useServer({ schema }, wsServer)
+    const schema = makeExecutableSchema({typeDefs, resolvers})
+    const serverCleanup = useServer({schema}, wsServer)
+
+    const batchBooks = async (keys, models) => {
+        const books = await Book.findAll({
+            where: {
+                id: {
+                    $in: keys,
+                },
+            },
+        });
+
+        return keys.map(key => books.find(book => book.id === key));
+    };
+
+    const bookLoader = new DataLoader((keys) => batchBooks(keys, Book));
 
     const server = new ApolloServer({
-        schema: makeExecutableSchema({ typeDefs, resolvers }),
+        schema: makeExecutableSchema({typeDefs, resolvers}),
+        context: ({ req }) => {
+            const auth = req ? req.headers.authorization : null;
+            if (auth && auth.startsWith('Bearer ')) {
+                const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET);
+                const currentUser = User.findById(decodedToken.id);
+                return { currentUser, loaders: { bookLoader } };
+            }
+        },
+
         plugins: [
-            ApolloServerPluginDrainHttpServer({ httpServer }),
+            ApolloServerPluginDrainHttpServer({httpServer}),
             {
                 async serverWillStart() {
                     return {
@@ -66,12 +93,12 @@ const start = async () => {
         cors(),
         express.json(),
         expressMiddleware(server, {
-            context: async ({ req }) => {
+            context: async ({req}) => {
                 const auth = req ? req.headers.authorization : null
                 if (auth && auth.startsWith('Bearer ')) {
                     const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
                     const currentUser = await User.findById(decodedToken.id)
-                    return { currentUser }
+                    return {currentUser}
                 }
             },
         }),
