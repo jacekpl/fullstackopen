@@ -71,7 +71,34 @@ class RatingDescription {
     }
 }
 
-const calculateExercises = (period: number[], target: number): Result => {
+interface Arguments {
+    target: number,
+    period: number[],
+}
+
+const parseArguments = (args: string[]): Arguments => {
+    if (args.length < 4) {
+        throw new Error('Wrong number of arguments');
+    }
+
+    const argumentsSlice: string[] = args.slice(2)
+    const period: number[] = []
+
+    for(let i in argumentsSlice) {
+        if(isNaN(Number(argumentsSlice[i]))) {
+            throw new Error('Argument is not a number')
+        }
+
+        period.push(Number(argumentsSlice[i]))
+    }
+
+    return {
+        target: Number(argumentsSlice[0]),
+        period: period.slice(1),
+    }
+}
+
+const calculateExercises = (period: number[], target: number): ResultInterface => {
     const sum: number = period.reduce((accumulator: number, currentValue: number) => {
         return accumulator + currentValue
     })
@@ -91,4 +118,13 @@ const calculateExercises = (period: number[], target: number): Result => {
     return new Result(average, periodLength, rating, RatingDescription.description(rating), success, target, trainingDays)
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+try {
+    const {target, period} = parseArguments(process.argv)
+    console.log(calculateExercises(period, target))
+} catch (error: unknown) {
+    let errorMessage = 'Something bad happened.'
+    if (error instanceof Error) {
+        errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
+}
