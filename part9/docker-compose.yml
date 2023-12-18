@@ -4,6 +4,6 @@ services:
         build:
             target: app
         ports:
-            - 4000:4000
+            - 3003:3003
         volumes:
             - .:/app
