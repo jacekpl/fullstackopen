@@ -44,6 +44,8 @@ const calculateBmi = (height: number, weight: number): string => {
     if (bmi <= 34.9) {
         return 'Obese (Class I)'
     }
+
+    return 'Too big to handle'
 }
 
 try {
