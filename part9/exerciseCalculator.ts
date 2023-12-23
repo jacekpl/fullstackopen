@@ -69,34 +69,34 @@ export function ratingDescription (rating: number): string {
   }
 }
 
-interface Arguments {
-  target: number
-  period: number[]
-}
+// interface Arguments {
+//   target: number
+//   period: number[]
+// }
+//
+// const parseArguments = (args: string[]): Arguments => {
+//   if (args.length < 2) {
+//     throw new Error('Wrong number of arguments')
+//   }
+//
+//   const argumentsSlice: string[] = args.slice(2)
+//   const period: number[] = []
+//
+//   for (const i of argumentsSlice) {
+//     if (isNaN(Number(argumentsSlice[i]))) {
+//       throw new Error('Argument is not a number')
+//     }
+//
+//     period.push(Number(argumentsSlice[i]))
+//   }
+//
+//   return {
+//     target: Number(argumentsSlice[0]),
+//     period: period.slice(1)
+//   }
+// }
 
-const parseArguments = (args: string[]): Arguments => {
-  if (args.length < 4) {
-    throw new Error('Wrong number of arguments')
-  }
-
-  const argumentsSlice: string[] = args.slice(2)
-  const period: number[] = []
-
-  for (const i of argumentsSlice) {
-    if (isNaN(Number(argumentsSlice[i]))) {
-      throw new Error('Argument is not a number')
-    }
-
-    period.push(Number(argumentsSlice[i]))
-  }
-
-  return {
-    target: Number(argumentsSlice[0]),
-    period: period.slice(1)
-  }
-}
-
-const calculateExercises = (period: number[], target: number): ResultInterface => {
+export const calculateExercises = (period: number[], target: number): ResultInterface => {
   const sum: number = period.reduce((accumulator: number, currentValue: number) => {
     return accumulator + currentValue
   })
@@ -116,13 +116,13 @@ const calculateExercises = (period: number[], target: number): ResultInterface =
   return new Result(average, periodLength, rating, ratingDescription(rating), success, target, trainingDays)
 }
 
-try {
-  const { target, period } = parseArguments(process.argv)
-  console.log(calculateExercises(period, target))
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened.'
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message
-  }
-  console.log(errorMessage)
-}
+// try {
+//   const { target, period } = parseArguments(process.argv)
+//   console.log(calculateExercises(period, target))
+// } catch (error: unknown) {
+//   let errorMessage = 'Something bad happened.'
+//   if (error instanceof Error) {
+//     errorMessage += ' Error: ' + error.message
+//   }
+//   console.log(errorMessage)
+// }

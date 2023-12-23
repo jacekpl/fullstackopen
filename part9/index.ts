@@ -1,7 +1,11 @@
 import express from 'express'
 import { calculateBmi } from './bmiCalculator'
+import {calculateExercises} from "./exerciseCalculator";
+import * as z from 'zod';
+import {ZodError} from "zod";
 
 const app = express()
+app.use(express.json())
 
 app.get('/ping', (_req, res) => {
   res.send('pong')
@@ -29,6 +33,28 @@ app.get('/bmi', (req, res) => {
     }
     res.send(errorMessage)
   }
+})
+
+app.post('/exercises', (req, res) => {
+  const requestSchema = z.object({
+    daily_exercises: z.array(z.number().nonnegative()),
+    target: z.number().nonnegative()
+  })
+
+  try {
+    requestSchema.parse(req.body)
+  } catch (error) {
+    if(error instanceof ZodError) {
+      res.send("parameters missing or malformatted parameters")
+    } else {
+      res.send("Error " + error.message)
+    }
+  }
+
+  const {daily_exercises, target} = req.body
+  const result = calculateExercises(daily_exercises, target)
+
+  res.send(result)
 })
 
 const PORT = 3003
