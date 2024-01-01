@@ -15,8 +15,8 @@ const getNonSensitiveEntries = (): NonSensitivePatient[] => {
     }));
 };
 
-const addPatient = () => {
-    return null;
+const addPatient = (patient: Patient) => {
+    return patients.push(patient);
 };
 
 export default {
