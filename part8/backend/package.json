@@ -22,7 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.6",
     "mongoose-unique-validator": "^4.0.0",
-    "uuid": "^9.0.1",
+    "uuid": "^14.0.0",
     "ws": "^8.14.2"
   },
   "devDependencies": {
